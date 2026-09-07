@@ -1,0 +1,1267 @@
+CREATE DATABASE FOODZONE;
+USE FOODZONE;
+
+CREATE TABLE customers (
+    customer_id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(15) UNIQUE NOT NULL,
+    address VARCHAR(255),
+    city VARCHAR(50),
+    registration_date DATE,
+    status VARCHAR(20) DEFAULT 'Active'
+);
+
+CREATE TABLE restaurants (
+    restaurant_id INT PRIMARY KEY AUTO_INCREMENT,
+    restaurant_name VARCHAR(100) NOT NULL,
+    owner_name VARCHAR(100) NOT NULL,
+    phone VARCHAR(15) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    address VARCHAR(255),
+    city VARCHAR(50),
+    food_type VARCHAR(50),
+    opening_time TIME,
+    closing_time TIME,
+    rating DECIMAL(2,1) DEFAULT 0.0,
+    status VARCHAR(20) DEFAULT 'Active'
+);
+
+CREATE TABLE menu (
+    food_id INT PRIMARY KEY AUTO_INCREMENT,
+    restaurant_id INT NOT NULL,
+    food_name VARCHAR(100) NOT NULL,
+    food_type VARCHAR(50),
+    price DECIMAL(10,2) NOT NULL,
+    available VARCHAR(20) DEFAULT 'Yes',
+
+    FOREIGN KEY (restaurant_id)
+    REFERENCES restaurants(restaurant_id)
+);
+
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY AUTO_INCREMENT,
+    customer_id INT NOT NULL,
+    restaurant_id INT NOT NULL,
+    order_date DATETIME NOT NULL,
+    total_amount DECIMAL(10,2),
+    order_status VARCHAR(20) DEFAULT 'Placed',
+
+    FOREIGN KEY (customer_id)
+        REFERENCES customers(customer_id),
+
+    FOREIGN KEY (restaurant_id)
+        REFERENCES restaurants(restaurant_id)
+);
+
+
+CREATE TABLE order_items (
+    item_id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT NOT NULL,
+    food_id INT NOT NULL,
+    quantity INT NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+
+    FOREIGN KEY (order_id)
+    REFERENCES orders(order_id),
+
+    FOREIGN KEY (food_id)
+    REFERENCES menu(food_id)
+);
+
+
+CREATE TABLE payments (
+    payment_id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT NOT NULL,
+    payment_method VARCHAR(30),
+    payment_amount DECIMAL(10,2),
+    payment_status VARCHAR(20),
+    payment_date DATETIME,
+
+    FOREIGN KEY (order_id)
+    REFERENCES orders(order_id)
+);
+
+
+CREATE TABLE deliveries (
+    delivery_id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT NOT NULL,
+    partner_name VARCHAR(100),
+    partner_phone VARCHAR(15),
+    delivery_status VARCHAR(20),
+    delivery_time INT,
+
+    FOREIGN KEY (order_id)
+    REFERENCES orders(order_id)
+);
+
+CREATE TABLE coupons (
+    coupon_id INT PRIMARY KEY AUTO_INCREMENT,
+    coupon_code VARCHAR(30) UNIQUE,
+    discount_percent DECIMAL(5,2),
+    start_date DATE,
+    end_date DATE,
+    status VARCHAR(20)
+);
+
+CREATE TABLE reviews (
+    review_id INT PRIMARY KEY AUTO_INCREMENT,
+    customer_id INT NOT NULL,
+    restaurant_id INT NOT NULL,
+    order_id INT NOT NULL,
+    rating DECIMAL(2,1),
+    comment VARCHAR(255),
+    review_date DATE,
+
+    FOREIGN KEY (customer_id)
+    REFERENCES customers(customer_id),
+
+    FOREIGN KEY (restaurant_id)
+    REFERENCES restaurants(restaurant_id),
+
+    FOREIGN KEY (order_id)
+    REFERENCES orders(order_id)
+);
+
+USE FOODZONE;
+
+CREATE TABLE food_categories (
+    category_id INT PRIMARY KEY AUTO_INCREMENT,
+    category_name VARCHAR(50) UNIQUE NOT NULL,
+    description VARCHAR(255)
+);
+
+CREATE TABLE delivery_partners (
+    delivery_partner_id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    phone VARCHAR(15) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    joining_date DATE,
+    vehicle_type VARCHAR(30),
+    vehicle_number VARCHAR(30),
+    city VARCHAR(50),
+    status VARCHAR(20) DEFAULT 'Available'
+);
+
+
+INSERT INTO customers
+(first_name, last_name, email, phone, address, city, registration_date, status)
+VALUES
+('Aarav','Sharma','aarav.sharma@gmail.com','9000000001','Andheri East','Mumbai','2025-01-10','Active'),
+('Aditi','Patil','aditi.patil@gmail.com','9000000002','Baner Road','Pune','2025-01-15','Active'),
+('Rohan','Deshmukh','rohan.deshmukh@gmail.com','9000000003','Kothrud','Pune','2025-02-01','Active'),
+('Sneha','Joshi','sneha.joshi@gmail.com','9000000004','Powai','Mumbai','2025-02-05','Active'),
+('Rahul','Verma','rahul.verma@gmail.com','9000000005','Vashi','Navi Mumbai','2025-02-10','Active'),
+('Priya','Shah','priya.shah@gmail.com','9000000006','Thane West','Thane','2025-02-12','Active'),
+('Vivek','Kulkarni','vivek.kulkarni@gmail.com','9000000007','Aundh','Pune','2025-02-18','Active'),
+('Neha','Mehta','neha.mehta@gmail.com','9000000008','Bandra West','Mumbai','2025-02-20','Active'),
+('Karan','Singh','karan.singh@gmail.com','9000000009','Goregaon West','Mumbai','2025-02-25','Active'),
+('Pooja','Nair','pooja.nair@gmail.com','9000000010','Worli','Mumbai','2025-03-01','Active'),
+('Akash','Gupta','akash.gupta@gmail.com','9000000011','Hinjewadi','Pune','2025-03-05','Active'),
+('Isha','Mishra','isha.mishra@gmail.com','9000000012','Kharadi','Pune','2025-03-08','Active'),
+('Sahil','Khan','sahil.khan@gmail.com','9000000013','Kurla','Mumbai','2025-03-10','Active'),
+('Ananya','Rao','ananya.rao@gmail.com','9000000014','Mulund','Mumbai','2025-03-15','Active'),
+('Manish','Yadav','manish.yadav@gmail.com','9000000015','Mira Road','Thane','2025-03-20','Active'),
+('Kavya','Iyer','kavya.iyer@gmail.com','9000000016','Viman Nagar','Pune','2025-03-25','Active'),
+('Aditya','Chavan','aditya.chavan@gmail.com','9000000017','Dadar','Mumbai','2025-04-01','Active'),
+('Simran','Kaur','simran.kaur@gmail.com','9000000018','Bhandup','Mumbai','2025-04-05','Active'),
+('Nikhil','More','nikhil.more@gmail.com','9000000019','Wakad','Pune','2025-04-10','Active'),
+('Riya','Kapoor','riya.kapoor@gmail.com','9000000020','Colaba','Mumbai','2025-04-15','Active'),
+('Saurabh','Jain','saurabh.jain@gmail.com','9000000021','Camp','Pune','2025-04-20','Active'),
+('Tanvi','Desai','tanvi.desai@gmail.com','9000000022','Matunga','Mumbai','2025-04-25','Active'),
+('Harsh','Pawar','harsh.pawar@gmail.com','9000000023','Pimpri','Pune','2025-05-01','Active'),
+('Meera','Sane','meera.sane@gmail.com','9000000024','Ghatkopar','Mumbai','2025-05-05','Active'),
+('Yash','Thakur','yash.thakur@gmail.com','9000000025','Akurdi','Pune','2025-05-10','Active'),
+('Komal','Bhosale','komal.bhosale@gmail.com','9000000026','Borivali','Mumbai','2025-05-15','Active'),
+('Omkar','Jadhav','omkar.jadhav@gmail.com','9000000027','Hadapsar','Pune','2025-05-20','Active'),
+('Mansi','Rane','mansi.rane@gmail.com','9000000028','Santacruz','Mumbai','2025-05-25','Active'),
+('Ritesh','Malhotra','ritesh.malhotra@gmail.com','9000000029','Powai','Mumbai','2025-06-01','Active'),
+('Shreya','Naik','shreya.naik@gmail.com','9000000030','Kothrud','Pune','2025-06-05','Active'),
+('Dev','Joshi','dev.joshi@gmail.com','9000000031','Vasai','Thane','2025-06-10','Active'),
+('Nisha','Saxena','nisha.saxena@gmail.com','9000000032','Andheri West','Mumbai','2025-06-15','Active'),
+('Abhishek','Tiwari','abhishek.tiwari@gmail.com','9000000033','Wakad','Pune','2025-06-20','Active'),
+('Swati','Shinde','swati.shinde@gmail.com','9000000034','Vashi','Navi Mumbai','2025-06-25','Active'),
+('Raj','Malik','raj.malik@gmail.com','9000000035','Thane East','Thane','2025-07-01','Active'),
+('Pallavi','Mhatre','pallavi.mhatre@gmail.com','9000000036','Dadar','Mumbai','2025-07-05','Active'),
+('Vishal','Patil','vishal.patil@gmail.com','9000000037','Baner','Pune','2025-07-10','Active'),
+('Sakshi','Gore','sakshi.gore@gmail.com','9000000038','Chembur','Mumbai','2025-07-15','Active'),
+('Amit','Sharma','amit.sharma@gmail.com','9000000039','Kalyan','Thane','2025-07-20','Active'),
+('Priti','Kulkarni','priti.kulkarni@gmail.com','9000000040','Aundh','Pune','2025-07-25','Active'),
+('Mohit','Agarwal','mohit.agarwal@gmail.com','9000000041','Malad','Mumbai','2025-08-01','Active'),
+('Sonali','Pawar','sonali.pawar@gmail.com','9000000042','Pimple Saudagar','Pune','2025-08-05','Active'),
+('Arjun','Nair','arjun.nair@gmail.com','9000000043','Bandra East','Mumbai','2025-08-10','Active'),
+('Deepa','Reddy','deepa.reddy@gmail.com','9000000044','Viman Nagar','Pune','2025-08-15','Active'),
+('Varun','Kumar','varun.kumar@gmail.com','9000000045','Goregaon East','Mumbai','2025-08-20','Active'),
+('Jyoti','Mane','jyoti.mane@gmail.com','9000000046','Pimpri','Pune','2025-08-25','Active'),
+('Nitin','Sawant','nitin.sawant@gmail.com','9000000047','Nerul','Navi Mumbai','2025-09-01','Active'),
+('Ayesha','Shaikh','ayesha.shaikh@gmail.com','9000000048','Kurla West','Mumbai','2025-09-05','Active'),
+('Tejas','Borkar','tejas.borkar@gmail.com','9000000049','Wagholi','Pune','2025-09-10','Active'),
+('Ira','Chopra','ira.chopra@gmail.com','9000000050','Thane West','Thane','2025-09-15','Active');
+
+
+
+INSERT INTO restaurants
+(restaurant_name, owner_name, phone, email, address, city,
+food_type, opening_time, closing_time, rating, status)
+VALUES
+('Spice Garden','Raj Malhotra','9100000001','spicegarden@gmail.com','Andheri West','Mumbai','Indian','10:00:00','23:00:00',4.5,'Active'),
+('Pizza Palace','Amit Kapoor','9100000002','pizzapalace@gmail.com','Bandra West','Mumbai','Italian','11:00:00','23:30:00',4.6,'Active'),
+('Burger Hub','Karan Shah','9100000003','burgerhub@gmail.com','Kothrud','Pune','Fast Food','11:00:00','23:00:00',4.2,'Active'),
+('Biryani House','Imran Khan','9100000004','biryanihouse@gmail.com','Kurla','Mumbai','Biryani','11:00:00','00:00:00',4.7,'Active'),
+('Dragon Bowl','Wei Chen','9100000005','dragonbowl@gmail.com','Viman Nagar','Pune','Chinese','11:00:00','22:30:00',4.3,'Active'),
+('South Express','Suresh Iyer','9100000006','southexpress@gmail.com','Dadar','Mumbai','South Indian','07:00:00','22:00:00',4.4,'Active'),
+('Sweet Treats','Neha Jain','9100000007','sweettreats@gmail.com','Baner','Pune','Desserts','10:00:00','23:00:00',4.1,'Active'),
+('Healthy Bites','Priya Nair','9100000008','healthybites@gmail.com','Powai','Mumbai','Healthy Food','08:00:00','21:30:00',4.6,'Active'),
+('Mumbai Tadka','Vijay Patil','9100000009','mumbaitadka@gmail.com','Thane West','Thane','Indian','10:00:00','23:00:00',4.0,'Active'),
+('Pune Zaika','Rohan Deshmukh','9100000010','punezaika@gmail.com','Wakad','Pune','Indian','10:30:00','23:00:00',4.5,'Active'),
+('Caffeine Cafe','Meera Shah','9100000011','caffeinecafe@gmail.com','Andheri East','Mumbai','Beverages','08:00:00','22:00:00',4.2,'Active'),
+('Urban Chinese','Daniel Lee','9100000012','urbanchinese@gmail.com','Hinjewadi','Pune','Chinese','11:00:00','23:00:00',4.4,'Active'),
+('Royal Biryani','Arif Shaikh','9100000013','royalbiryani@gmail.com','Mira Road','Thane','Biryani','11:00:00','00:00:00',4.8,'Active'),
+('Food Street','Sanjay Joshi','9100000014','foodstreet@gmail.com','Goregaon','Mumbai','Fast Food','10:00:00','23:30:00',3.9,'Active'),
+('Green Bowl','Kavita Rao','9100000015','greenbowl@gmail.com','Aundh','Pune','Healthy Food','08:00:00','22:00:00',4.7,'Active');
+
+
+INSERT INTO food_categories
+(category_name, description)
+VALUES
+('Pizza','Different types of pizza'),
+('Burger','Different types of burgers'),
+('Indian','Indian food'),
+('Chinese','Chinese and Indo-Chinese food'),
+('Desserts','Cakes, ice cream and sweets'),
+('Beverages','Hot and cold beverages'),
+('South Indian','Dosa, Idli, Vada and South Indian meals'),
+('Fast Food','Quick service food'),
+('Biryani','Different types of biryani'),
+('Healthy Food','Healthy and nutritious food');
+
+
+INSERT INTO delivery_partners
+(first_name, last_name, phone, email, joining_date,
+vehicle_type, vehicle_number, city, status)
+VALUES
+('Ravi','Kumar','9200000001','ravi.kumar@gmail.com','2024-01-10','Bike','MH01AB1001','Mumbai','Available'),
+('Aman','Sharma','9200000002','aman.sharma@gmail.com','2024-01-15','Bike','MH01AB1002','Mumbai','Available'),
+('Suresh','Patil','9200000003','suresh.patil@gmail.com','2024-02-01','Bike','MH12CD2001','Pune','Busy'),
+('Vikas','Jadhav','9200000004','vikas.jadhav@gmail.com','2024-02-10','Scooter','MH12CD2002','Pune','Available'),
+('Imran','Shaikh','9200000005','imran.shaikh@gmail.com','2024-02-15','Bike','MH01EF3001','Mumbai','Busy'),
+('Nilesh','Pawar','9200000006','nilesh.pawar@gmail.com','2024-03-01','Bike','MH01EF3002','Mumbai','Available'),
+('Rahul','More','9200000007','rahul.more@gmail.com','2024-03-10','Scooter','MH12GH4001','Pune','Available'),
+('Akash','Shinde','9200000008','akash.shinde@gmail.com','2024-03-15','Bike','MH12GH4002','Pune','Busy'),
+('Deepak','Yadav','9200000009','deepak.yadav@gmail.com','2024-04-01','Bike','MH01IJ5001','Mumbai','Available'),
+('Kunal','Verma','9200000010','kunal.verma@gmail.com','2024-04-10','Bike','MH01IJ5002','Mumbai','Available'),
+('Prakash','Nair','9200000011','prakash.nair@gmail.com','2024-04-15','Scooter','MH12KL6001','Pune','Offline'),
+('Rohit','Desai','9200000012','rohit.desai@gmail.com','2024-05-01','Bike','MH12KL6002','Pune','Available'),
+('Ganesh','Mane','9200000013','ganesh.mane@gmail.com','2024-05-10','Bike','MH01MN7001','Mumbai','Busy'),
+('Sahil','Khan','9200000014','sahil.khan@gmail.com','2024-05-15','Bike','MH01MN7002','Mumbai','Available'),
+('Vijay','Rao','9200000015','vijay.rao@gmail.com','2024-06-01','Scooter','MH12OP8001','Pune','Available'),
+('Manoj','Kulkarni','9200000016','manoj.kulkarni@gmail.com','2024-06-10','Bike','MH12OP8002','Pune','Busy'),
+('Ajay','Joshi','9200000017','ajay.joshi@gmail.com','2024-06-15','Bike','MH01QR9001','Mumbai','Available'),
+('Sameer','Khan','9200000018','sameer.khan@gmail.com','2024-07-01','Bike','MH01QR9002','Mumbai','Available'),
+('Vinod','Pawar','9200000019','vinod.pawar@gmail.com','2024-07-10','Scooter','MH12ST1001','Pune','Available'),
+('Sachin','Patil','9200000020','sachin.patil@gmail.com','2024-07-15','Bike','MH12ST1002','Pune','Busy'),
+('Arun','Mehta','9200000021','arun.mehta@gmail.com','2024-08-01','Bike','MH01UV1101','Mumbai','Available'),
+('Mahesh','Shah','9200000022','mahesh.shah@gmail.com','2024-08-10','Bike','MH01UV1102','Mumbai','Available'),
+('Ramesh','Gupta','9200000023','ramesh.gupta@gmail.com','2024-08-15','Scooter','MH12WX1201','Pune','Offline'),
+('Tarun','Singh','9200000024','tarun.singh@gmail.com','2024-09-01','Bike','MH12WX1202','Pune','Available'),
+('Yogesh','Chavan','9200000025','yogesh.chavan@gmail.com','2024-09-10','Bike','MH01YZ1301','Mumbai','Available');
+
+
+
+SELECT COUNT(*) FROM customers;
+SELECT COUNT(*) FROM restaurants;
+SELECT COUNT(*) FROM food_categories;
+SELECT COUNT(*) FROM delivery_partners;
+
+
+INSERT INTO menu
+(restaurant_id, food_name, food_type, price, available)
+VALUES
+(1,'Paneer Butter Masala','Main Course',280.00,'Yes'),
+(1,'Butter Naan','Bread',60.00,'Yes'),
+(1,'Dal Tadka','Main Course',220.00,'Yes'),
+(1,'Veg Biryani','Rice',240.00,'Yes'),
+(1,'Chole Bhature','Main Course',180.00,'Yes'),
+(1,'Paneer Tikka','Starter',260.00,'Yes'),
+(1,'Veg Thali','Thali',300.00,'Yes'),
+
+(2,'Margherita Pizza','Pizza',299.00,'Yes'),
+(2,'Farmhouse Pizza','Pizza',449.00,'Yes'),
+(2,'Paneer Tikka Pizza','Pizza',479.00,'Yes'),
+(2,'Cheese Burst Pizza','Pizza',399.00,'Yes'),
+(2,'Veggie Supreme Pizza','Pizza',499.00,'Yes'),
+(2,'Garlic Bread','Starter',159.00,'Yes'),
+(2,'Cheese Garlic Bread','Starter',199.00,'Yes'),
+
+(3,'Classic Veg Burger','Burger',179.00,'Yes'),
+(3,'Cheese Burger','Burger',219.00,'Yes'),
+(3,'Paneer Burger','Burger',249.00,'Yes'),
+(3,'French Fries','Side Dish',129.00,'Yes'),
+(3,'Peri Peri Fries','Side Dish',159.00,'Yes'),
+(3,'Veg Nuggets','Starter',169.00,'Yes'),
+(3,'Cheese Sandwich','Sandwich',189.00,'Yes'),
+
+(4,'Chicken Biryani','Biryani',349.00,'Yes'),
+(4,'Mutton Biryani','Biryani',449.00,'Yes'),
+(4,'Veg Biryani','Biryani',249.00,'Yes'),
+(4,'Egg Biryani','Biryani',279.00,'Yes'),
+(4,'Chicken Tikka','Starter',299.00,'Yes'),
+(4,'Chicken Kebab','Starter',319.00,'Yes'),
+(4,'Raita','Side Dish',80.00,'Yes'),
+
+(5,'Veg Hakka Noodles','Noodles',229.00,'Yes'),
+(5,'Chicken Hakka Noodles','Noodles',279.00,'Yes'),
+(5,'Veg Fried Rice','Rice',219.00,'Yes'),
+(5,'Chicken Fried Rice','Rice',269.00,'Yes'),
+(5,'Manchurian','Starter',239.00,'Yes'),
+(5,'Spring Rolls','Starter',189.00,'Yes'),
+(5,'Chilli Paneer','Starter',249.00,'Yes'),
+
+(6,'Masala Dosa','South Indian',150.00,'Yes'),
+(6,'Plain Dosa','South Indian',120.00,'Yes'),
+(6,'Idli Sambar','South Indian',100.00,'Yes'),
+(6,'Medu Vada','South Indian',110.00,'Yes'),
+(6,'Masala Uttapam','South Indian',160.00,'Yes'),
+(6,'Mysore Dosa','South Indian',170.00,'Yes'),
+(6,'South Indian Thali','Thali',250.00,'Yes'),
+
+(7,'Chocolate Cake','Dessert',299.00,'Yes'),
+(7,'Red Velvet Cake','Dessert',349.00,'Yes'),
+(7,'Brownie','Dessert',149.00,'Yes'),
+(7,'Chocolate Ice Cream','Dessert',120.00,'Yes'),
+(7,'Vanilla Ice Cream','Dessert',100.00,'Yes'),
+(7,'Gulab Jamun','Dessert',110.00,'Yes'),
+(7,'Cheesecake','Dessert',329.00,'Yes'),
+
+(8,'Greek Salad','Healthy Food',249.00,'Yes'),
+(8,'Paneer Salad','Healthy Food',279.00,'Yes'),
+(8,'Veg Wrap','Healthy Food',199.00,'Yes'),
+(8,'Protein Bowl','Healthy Food',329.00,'Yes'),
+(8,'Fruit Bowl','Healthy Food',179.00,'Yes'),
+(8,'Grilled Paneer','Healthy Food',299.00,'Yes'),
+(8,'Quinoa Bowl','Healthy Food',319.00,'Yes'),
+
+(9,'Butter Chicken','Main Course',329.00,'Yes'),
+(9,'Paneer Masala','Main Course',269.00,'Yes'),
+(9,'Dal Makhani','Main Course',239.00,'Yes'),
+(9,'Garlic Naan','Bread',70.00,'Yes'),
+(9,'Tandoori Roti','Bread',45.00,'Yes'),
+(9,'Veg Kebab','Starter',229.00,'Yes'),
+(9,'Chicken Tikka Masala','Main Course',349.00,'Yes'),
+
+(10,'Pav Bhaji','Fast Food',160.00,'Yes'),
+(10,'Misal Pav','Fast Food',140.00,'Yes'),
+(10,'Paneer Kolhapuri','Main Course',280.00,'Yes'),
+(10,'Veg Kolhapuri','Main Course',250.00,'Yes'),
+(10,'Butter Naan','Bread',60.00,'Yes'),
+(10,'Tandoori Roti','Bread',45.00,'Yes'),
+(10,'Veg Thali','Thali',280.00,'Yes'),
+
+(11,'Cold Coffee','Beverage',149.00,'Yes'),
+(11,'Cappuccino','Beverage',139.00,'Yes'),
+(11,'Cafe Latte','Beverage',159.00,'Yes'),
+(11,'Masala Tea','Beverage',89.00,'Yes'),
+(11,'Green Tea','Beverage',99.00,'Yes'),
+(11,'Iced Tea','Beverage',129.00,'Yes'),
+(11,'Chocolate Shake','Beverage',179.00,'Yes'),
+
+(12,'Schezwan Noodles','Noodles',249.00,'Yes'),
+(12,'Veg Manchurian','Starter',229.00,'Yes'),
+(12,'Chicken Chilli','Starter',299.00,'Yes'),
+(12,'Veg Fried Rice','Rice',219.00,'Yes'),
+(12,'Chicken Fried Rice','Rice',279.00,'Yes'),
+(12,'Spring Rolls','Starter',189.00,'Yes'),
+(12,'Chilli Paneer','Starter',259.00,'Yes'),
+
+(13,'Hyderabadi Chicken Biryani','Biryani',369.00,'Yes'),
+(13,'Mutton Biryani','Biryani',459.00,'Yes'),
+(13,'Veg Biryani','Biryani',259.00,'Yes'),
+(13,'Chicken 65','Starter',289.00,'Yes'),
+(13,'Chicken Kebab','Starter',319.00,'Yes'),
+(13,'Egg Biryani','Biryani',289.00,'Yes'),
+
+(14,'Veg Sandwich','Fast Food',149.00,'Yes'),
+(14,'Cheese Sandwich','Fast Food',189.00,'Yes'),
+(14,'Veg Pizza','Pizza',299.00,'Yes'),
+(14,'Veg Burger','Burger',179.00,'Yes'),
+(14,'French Fries','Side Dish',129.00,'Yes'),
+(14,'Cheese Fries','Side Dish',169.00,'Yes'),
+
+(15,'Avocado Salad','Healthy Food',299.00,'Yes'),
+(15,'Paneer Bowl','Healthy Food',279.00,'Yes'),
+(15,'Veggie Bowl','Healthy Food',249.00,'Yes'),
+(15,'Quinoa Salad','Healthy Food',289.00,'Yes'),
+(15,'Grilled Vegetable Plate','Healthy Food',259.00,'Yes'),
+(15,'Fruit Smoothie','Beverage',199.00,'Yes');
+
+
+INSERT INTO coupons
+(coupon_code, discount_percent, start_date, end_date, status)
+VALUES
+('WELCOME10',10.00,'2025-01-01','2025-12-31','Active'),
+('FOOD10',10.00,'2025-01-01','2025-06-30','Expired'),
+('SAVE15',15.00,'2025-02-01','2025-12-31','Active'),
+('FOOD20',20.00,'2025-03-01','2025-05-31','Expired'),
+('FIRSTORDER25',25.00,'2025-01-01','2025-12-31','Active'),
+('PIZZA10',10.00,'2025-02-01','2025-12-31','Active'),
+('BURGER15',15.00,'2025-03-01','2025-09-30','Expired'),
+('BIRYANI20',20.00,'2025-04-01','2025-12-31','Active'),
+('WEEKEND10',10.00,'2025-01-01','2025-12-31','Active'),
+('FESTIVE25',25.00,'2025-08-01','2025-11-30','Active'),
+('NEWUSER20',20.00,'2025-01-01','2025-12-31','Active'),
+('MEAL15',15.00,'2025-05-01','2025-10-31','Active'),
+('LUNCH10',10.00,'2025-01-01','2025-12-31','Active'),
+('DINNER15',15.00,'2025-01-01','2025-12-31','Active'),
+('SPECIAL20',20.00,'2025-06-01','2025-08-31','Expired'),
+('MONDAY10',10.00,'2025-01-01','2025-12-31','Active'),
+('FAMILY25',25.00,'2025-04-01','2025-12-31','Active'),
+('FLASH30',30.00,'2025-07-01','2025-07-31','Expired'),
+('HEALTHY15',15.00,'2025-01-01','2025-12-31','Active'),
+('FOODFEST20',20.00,'2025-09-01','2025-12-31','Active');
+
+
+INSERT INTO orders
+(customer_id, restaurant_id, order_date, total_amount, order_status)
+WITH RECURSIVE order_numbers AS (
+    SELECT 1 AS n
+
+    UNION ALL
+
+    SELECT n + 1
+    FROM order_numbers
+    WHERE n < 300
+)
+SELECT
+    ((n - 1) % 50) + 1 AS customer_id,
+    ((n - 1) % 15) + 1 AS restaurant_id,
+
+    DATE_ADD(
+        '2025-01-01 10:00:00',
+        INTERVAL (n * 2) DAY
+    ) AS order_date,
+
+    CASE ((n - 1) % 10)
+        WHEN 0 THEN 299.00
+        WHEN 1 THEN 450.00
+        WHEN 2 THEN 599.00
+        WHEN 3 THEN 749.00
+        WHEN 4 THEN 899.00
+        WHEN 5 THEN 349.00
+        WHEN 6 THEN 499.00
+        WHEN 7 THEN 699.00
+        WHEN 8 THEN 999.00
+        ELSE 399.00
+    END AS total_amount,
+
+    CASE ((n - 1) % 5)
+        WHEN 0 THEN 'Delivered'
+        WHEN 1 THEN 'Delivered'
+        WHEN 2 THEN 'Placed'
+        WHEN 3 THEN 'Cancelled'
+        ELSE 'Delivered'
+    END AS order_status
+
+FROM order_numbers;
+
+
+INSERT INTO order_items
+(order_id, food_id, quantity, price)
+WITH RECURSIVE item_numbers AS (
+    SELECT 1 AS n
+
+    UNION ALL
+
+    SELECT n + 1
+    FROM item_numbers
+    WHERE n < 600
+)
+SELECT
+    ((n - 1) % 300) + 1 AS order_id,
+    ((n * 7 - 1) % 100) + 1 AS food_id,
+    ((n - 1) % 3) + 1 AS quantity,
+    (
+        SELECT price
+        FROM menu
+        WHERE food_id = ((n * 7 - 1) % 100) + 1
+    ) AS price
+FROM item_numbers;
+
+
+INSERT INTO payments
+(order_id, payment_method, payment_amount, payment_status, payment_date)
+SELECT
+    order_id,
+
+    CASE (order_id % 5)
+        WHEN 1 THEN 'UPI'
+        WHEN 2 THEN 'Credit Card'
+        WHEN 3 THEN 'Debit Card'
+        WHEN 4 THEN 'Cash'
+        ELSE 'Wallet'
+    END AS payment_method,
+
+    total_amount AS payment_amount,
+
+    CASE order_status
+        WHEN 'Cancelled' THEN 'Refunded'
+        ELSE 'Paid'
+    END AS payment_status,
+
+    order_date AS payment_date
+
+FROM orders;
+
+
+INSERT INTO deliveries
+(order_id, partner_name, partner_phone, delivery_status, delivery_time)
+SELECT
+    o.order_id,
+
+    CONCAT(dp.first_name, ' ', dp.last_name) AS partner_name,
+
+    dp.phone AS partner_phone,
+
+    CASE
+        WHEN o.order_status = 'Cancelled' THEN 'Cancelled'
+        WHEN o.order_status = 'Delivered' THEN 'Delivered'
+        WHEN o.order_id % 3 = 0 THEN 'Out for Delivery'
+        ELSE 'Assigned'
+    END AS delivery_status,
+
+    CASE
+        WHEN o.order_status = 'Cancelled' THEN 0
+        ELSE 20 + (o.order_id % 41)
+    END AS delivery_time
+
+FROM orders o
+JOIN delivery_partners dp
+    ON dp.delivery_partner_id = ((o.order_id - 1) % 25) + 1
+WHERE o.order_id <= 250;
+
+
+INSERT INTO reviews
+(customer_id, restaurant_id, order_id, rating, comment, review_date)
+SELECT
+    o.customer_id,
+    o.restaurant_id,
+    o.order_id,
+
+    CASE (o.order_id % 5)
+        WHEN 0 THEN 5.0
+        WHEN 1 THEN 4.5
+        WHEN 2 THEN 4.0
+        WHEN 3 THEN 3.5
+        ELSE 4.5
+    END AS rating,
+
+    CASE (o.order_id % 5)
+        WHEN 0 THEN 'Excellent food and great service'
+        WHEN 1 THEN 'Very tasty food and quick delivery'
+        WHEN 2 THEN 'Good food and reasonable price'
+        WHEN 3 THEN 'Food was good but delivery was late'
+        ELSE 'Nice experience, would order again'
+    END AS comment,
+
+    DATE(o.order_date) AS review_date
+
+FROM orders o
+WHERE o.order_id <= 150;
+
+
+SELECT * FROM customers;
+SELECT * FROM restaurants;
+SELECT * FROM orders;
+SELECT * FROM order_items;
+SELECT * FROM menu;
+SELECT * FROM PAYMENTS;
+SELECT * FROM DELIVERIES;
+SELECT * FROM COUPONS;
+SELECT * FROM REVIEWS;
+SELECT * FROM FOOD_CATEGORIES;
+SELECT * FROM DELIVERY_PARTNERS;
+
+1)Retrieve all customers
+SELECT *
+FROM customers
+
+2)Find customers from a particular city
+SELECT *
+FROM customers
+WHERE city = 'Mumbai';
+
+4)Find unique cities
+SELECT DISTINCT CITY FROM CUSTOMERS;
+
+5)Display restaurants by rating (highest first)
+SELECT * FROM RESTAURANTS 
+ORDER BY RATING DESC;
+
+6)Display the top 5 restaurants
+SELECT * FROM RESTAURANTS 
+ORDER BY RATING DESC LIMIT 5;
+
+7)Give a temporary name to columns
+SELECT
+    customer_id AS ID,
+    CONCAT(first_name, ' ', last_name) AS customer_name,
+    city AS customer_city
+FROM customers;
+
+8)Find restaurants with rating greater than 4.5
+SELECT *
+FROM restaurants
+WHERE rating > 4.5;
+
+9)Find orders where total amount is between ₹500 and ₹1,500
+SELECT * FROM ORDERS
+WHERE TOTAL_AMOUNT BETWEEN 500 AND 1500;
+
+10)Find customers from selected cities
+-- Selected cities: Mumbai, Pune and Thane
+SELECT *
+FROM customers
+WHERE city IN ('Mumbai', 'Pune', 'Thane');
+
+11)Find food items whose names contain "Pizza"
+SELECT * FROM MENU WHERE FOOD_NAME LIKE "%PIZZA%";
+
+12)Find orders that have not been delivered
+SELECT *
+FROM orders
+WHERE order_status <> 'Delivered';
+
+13)How many customers are registered?
+SELECT COUNT(*) AS TOTAL_COUNT
+FROM CUSTOMERS;
+
+14)What is the total revenue?
+SELECT SUM(TOTAL_AMOUNT)
+FROM ORDERS;
+
+15)What is the average order value?
+SELECT AVG(TOTAL_AMOUNT) FROM ORDERS;
+
+16)What is the highest order amount?
+SELECT MAX(TOTAL_AMOUNT) FROM ORDERS;
+
+17)What is the lowest menu item price?
+SELECT MIN(PRICE) FROM MENU;
+
+18)How many orders have been delivered?
+SELECT COUNT(*) AS delivered_orders
+FROM orders
+WHERE order_status = 'Delivered';
+
+19)How many restaurants are available in each city?/
+SELECT city, COUNT(*) AS restaurant_count
+FROM restaurants
+GROUP BY city;
+
+20)Find total orders per restaurant
+SELECT RESTAURANT_ID, COUNT(ORDER_ID) FROM ORDERS
+GROUP BY RESTAURANT_ID;
+
+21)Find revenue generated by each restaurant
+SELECT RESTAURANT_ID, SUM(TOTAL_AMOUNT) FROM ORDERS 
+GROUP BY RESTAURANT_ID;
+
+22)Find number of customers in each city
+SELECT CITY, COUNT(CUSTOMER_ID) FROM CUSTOMERS
+GROUP BY CITY;
+
+23)Find average order value for each restaurant
+SELECT RESTAURANT_ID, AVG(ORDER_ID) FROM ORDERS
+GROUP BY RESTAURANT_ID;
+
+24)Find total sales for each food category
+SELECT m.food_type AS food_category,
+    SUM(oi.quantity * oi.price) AS total_sales
+FROM order_items oi
+JOIN menu m
+    ON oi.food_id = m.food_id
+GROUP BY m.food_type;
+SELECT * FROM DELIVERIES
+SELECT * FROM DELIVERY_PARTNERS
+25)Find number of orders handled by each delivery partner
+SELECT PARTNER_NAME, COUNT(ORDER_ID) FROM ORDERS
+GROUP BY PARTNER_NAME; 
+
+26)Find restaurants having more than 20 orders
+SELECT
+    r.restaurant_name,
+    COUNT(o.order_id) AS total_orders
+FROM restaurants r
+JOIN orders o
+    ON r.restaurant_id = o.restaurant_id
+GROUP BY r.restaurant_id, r.restaurant_name
+HAVING COUNT(o.order_id) > 20;
+use foodzone;
+27)Find restaurants generating revenue greater than ₹1,00,000
+SELECT
+    r.restaurant_name,
+    SUM(o.total_amount) AS total_revenue
+FROM restaurants r
+JOIN orders o
+    ON r.restaurant_id = o.restaurant_id
+GROUP BY r.restaurant_id, r.restaurant_name
+HAVING SUM(o.total_amount) > 10000;
+
+28)Find delivery partners who completed more than 30 deliveries
+SELECT
+    partner_name,
+    COUNT(order_id) AS completed_deliveries
+FROM deliveries
+WHERE delivery_status = 'Delivered'
+GROUP BY partner_name
+HAVING COUNT(order_id) > 5;
+
+29)Find food categories generating revenue above a specified amount
+SELECT
+    m.food_type AS food_category,
+    SUM(oi.quantity * oi.price) AS total_revenue
+FROM order_items oi
+JOIN menu m
+    ON oi.food_id = m.food_id
+GROUP BY m.food_type
+HAVING SUM(oi.quantity * oi.price) > 10000;
+
+30)Find all customers, including customers who have never placed an order
+SELECT
+    c.customer_id,
+    CONCAT(c.first_name, ' ', c.last_name) AS customer_name,
+    o.order_id,
+    o.total_amount,
+    o.order_status
+FROM customers c
+LEFT JOIN orders o
+    ON c.customer_id = o.customer_id;
+    
+    31)Find all restaurants and their corresponding orders
+SELECT
+    r.restaurant_id,
+    r.restaurant_name,
+    o.order_id,
+    o.total_amount,
+    o.order_status
+FROM orders o
+RIGHT JOIN restaurants r
+    ON o.restaurant_id = r.restaurant_id;
+    
+32)Generate all possible combinations of restaurants and food categories
+SELECT
+    r.restaurant_name,
+    fc.category_name
+FROM restaurants r
+CROSS JOIN food_categories fc;
+
+33)Find monthly revenue
+SELECT 
+    MONTHNAME(order_date) ,
+    SUM(total_amount) 
+FROM orders
+GROUP BY MONTHNAME(order_date);
+
+34)Find yearly revenue
+SELECT
+    YEAR(order_date) ,
+    SUM(total_amount)
+FROM orders
+GROUP BY YEAR(order_date);
+
+35)ind orders placed on weekends
+SELECT * FROM orders
+WHERE DAYOFWEEK(order_date) IN (1, 7);
+
+36)Find customers registered in a particular year
+SELECT * FROM customers
+WHERE YEAR(registration_date) = 2025;
+
+37)SELECT
+    delivery_id,
+    order_id,
+    partner_name,
+    delivery_status,
+    delivery_time 
+FROM deliveries;
+
+38)Find the average delivery time
+SELECT
+    AVG(delivery_time) AS average_delivery_time_minutes
+FROM deliveries
+WHERE delivery_status = 'Delivered';
+
+39)Generate full customer names using CONCAT()
+SELECT
+    customer_id,
+    CONCAT(first_name, ' ', last_name)
+FROM customers;
+
+40)Display restaurant names in uppercase using UPPER()
+SELECT
+    restaurant_name,
+    UPPER(restaurant_name) 
+FROM restaurants;
+
+41)Generate formatted customer information
+SELECT
+    CONCAT(
+        first_name, ' ', last_name,' | City: ', city,' | Phone: ', phone) 
+FROM customers;
+
+42)Extract username portion from email address
+SELECT
+    email,
+    SUBSTRING_INDEX(email, '@', 1) AS email_username
+FROM customers;
+
+43)LOWER() 
+SELECT
+    restaurant_name,
+    LOWER(restaurant_name) AS lowercase_name
+FROM restaurants;
+
+44)LENGTH() 
+SELECT
+    restaurant_name, LENGTH(restaurant_name) AS name_length
+FROM restaurants;
+
+45)SUBSTRING() 
+SELECT
+    restaurant_name,
+    SUBSTRING(restaurant_name, 1, 5) AS first_five_characters
+FROM restaurants;
+
+46)TRIM() 
+SELECT
+    first_name,TRIM(first_name) 
+FROM customers;
+
+47)Display rounded order values
+SELECT
+    order_id, total_amount, ROUND(total_amount) AS rounded_order_value
+FROM orders;
+
+48)Round order amount upward
+SELECT
+    order_id, total_amount, CEIL(total_amount)
+FROM orders;
+
+49)Round order amount downward
+SELECT
+    order_id, total_amount, FLOOR(total_amount) 
+FROM orders;
+
+50)ABS() Calculate absolute difference from ₹500
+SELECT
+    order_id, total_amount, ABS(total_amount - 500)
+FROM orders;
+
+51)MOD() Find remainder when order ID is divided by 2
+SELECT
+    order_id, MOD(order_id, 2) AS remainder
+FROM orders;
+
+52)POWER() Example calculation using quantity
+SELECT
+    food_id, quantity, POWER(quantity, 2) AS quantity_square
+FROM order_items;
+
+53)Discount calculation (10%)
+SELECT
+    order_id, total_amount,
+    ROUND(total_amount * 0.10, 2) AS discount_amount,
+    ROUND(total_amount * 0.90, 2) AS final_amount
+FROM orders;
+
+
+54) Delivery charge calculation ₹40 delivery charge
+SELECT
+    order_id, total_amount, 40 ,
+    total_amount + 40 AS final_payable_amount
+FROM orders;
+
+55)Find restaurants whose rating is greater than the average restaurant rating
+SELECT 
+restaurant_name, rating
+FROM restaurants
+WHERE rating > (SELECT AVG(rating)
+FROM restaurants
+);
+
+56)Find customers who placed orders at restaurants located in Mumbai
+SELECT
+    customer_id, first_name, last_name, city
+FROM customers
+WHERE customer_id IN (SELECT customer_id FROM orders
+    WHERE restaurant_id IN (SELECT restaurant_id FROM restaurants WHERE city = 'Mumbai')
+);
+
+57)Find customers whose spending is greater than the average spending
+SELECT
+    c.customer_id,
+    CONCAT(c.first_name, ' ', c.last_name) AS customer_name,
+    SUM(o.total_amount) AS total_spending
+FROM customers c
+JOIN orders o
+    ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.first_name, c.last_name
+HAVING SUM(o.total_amount) > (
+    SELECT AVG(customer_spending)
+    FROM (
+        SELECT
+            SUM(total_amount) AS customer_spending
+        FROM orders
+        GROUP BY customer_id
+    ) AS spending_data
+);
+
+58)Calculate additional information for each customer
+SELECT
+    c.customer_id,
+    CONCAT(c.first_name, ' ', c.last_name) AS customer_name,
+
+    (
+        SELECT COUNT(*)
+        FROM orders o
+        WHERE o.customer_id = c.customer_id
+    ) AS total_orders
+
+FROM customers c;
+
+59)Create a derived table containing customer-level revenue
+SELECT *FROM (SELECT customer_id,
+	SUM(total_amount) AS customer_revenue
+    FROM orders
+    GROUP BY customer_id
+) AS customer_revenue_data;
+
+60)Find restaurants whose revenue is greater than the average restaurant revenue
+SELECT
+    r.restaurant_name,
+    SUM(o.total_amount) AS total_revenue
+FROM restaurants r
+JOIN orders o
+    ON r.restaurant_id = o.restaurant_id
+GROUP BY r.restaurant_id, r.restaurant_name
+HAVING SUM(o.total_amount) > (
+    SELECT AVG(restaurant_revenue)
+    FROM (
+        SELECT
+            SUM(total_amount) AS restaurant_revenue
+        FROM orders
+        GROUP BY restaurant_id
+    ) AS revenue_data
+);
+
+61)Customers who have placed at least one order
+SELECT * FROM customers c
+WHERE EXISTS ( SELECT 1 FROM orders o
+    WHERE o.customer_id = c.customer_id
+);
+
+62)Customers who have never placed an order
+SELECT * FROM customers c
+WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id
+);
+
+63)Restaurants that have received reviews
+SELECT * FROM restaurants r
+WHERE EXISTS ( SELECT 1 FROM reviews rv
+    WHERE rv.restaurant_id = r.restaurant_id
+);
+
+64)Restaurants that have never received a review
+SELECT * FROM restaurants r
+WHERE NOT EXISTS (SELECT 1 FROM reviews rv
+WHERE rv.restaurant_id = r.restaurant_id
+);
+
+65)Rating greater than ANY restaurant in Mumbai
+SELECT restaurant_name, rating
+FROM restaurants
+WHERE rating > ANY (
+    SELECT rating
+    FROM restaurants
+    WHERE city = 'Mumbai'
+);
+
+66)Rating greater than ALL restaurants in Mumbai
+SELECT restaurant_name, rating
+FROM restaurants
+WHERE rating > ALL (
+    SELECT rating
+    FROM restaurants
+    WHERE city = 'Mumbai'
+);
+
+67)START TRANSACTION;
+
+ Create Order
+INSERT INTO orders
+(customer_id, restaurant_id, order_date, total_amount, order_status)
+VALUES
+(1, 1, NOW(), 340.00, 'Placed');
+
+Step 2: Get the newly created order ID
+SET @new_order_id = LAST_INSERT_ID();
+
+Step 3: Add Order Item
+INSERT INTO order_items
+(order_id, food_id, quantity, price)
+VALUES
+(@new_order_id, 1, 1, 280.00);
+
+Step 4: Create Payment
+INSERT INTO payments
+(order_id, payment_method, payment_amount, payment_status, payment_date)
+VALUES
+(@new_order_id, 'UPI', 280.00, 'Paid', NOW());
+COMMIT;
+
+68)View 1 – Customer Order Details
+CREATE VIEW customer_order_details AS
+SELECT
+    CONCAT(c.first_name, ' ', c.last_name) AS customer_name,
+    o.order_id,
+    r.restaurant_name,
+    o.total_amount,
+    o.order_date,
+    o.order_status
+FROM orders o
+JOIN customers c
+    ON o.customer_id = c.customer_id
+JOIN restaurants r
+    ON o.restaurant_id = r.restaurant_id;
+    
+    SELECT * FROM customer_order_details;
+    
+69)View 2 – Restaurant Performance
+CREATE VIEW restaurant_performance AS
+SELECT
+    r.restaurant_name,
+    COUNT(o.order_id) AS total_orders,
+    SUM(o.total_amount) AS total_revenue,
+    AVG(o.total_amount) AS average_order_value,
+    r.rating AS average_rating
+FROM restaurants r
+LEFT JOIN orders o
+    ON r.restaurant_id = o.restaurant_id
+GROUP BY r.restaurant_id, r.restaurant_name, r.rating;
+SELECT * FROM restaurant_performance;
+
+70)View 3 – Delivery Partner Performance
+CREATE VIEW delivery_partner_performance AS
+SELECT
+    partner_name AS delivery_partner,
+    COUNT(order_id) AS total_deliveries,
+    AVG(delivery_time) AS average_delivery_time
+FROM deliveries
+GROUP BY partner_name;
+
+SELECT * FROM delivery_partner_performance;
+
+71)Procedure 1 – Place an Order
+DELIMITER //
+CREATE PROCEDURE PlaceOrder(
+    IN p_customer_id INT,
+    IN p_restaurant_id INT,
+    IN p_total_amount DECIMAL(10,2)
+)
+BEGIN
+    INSERT INTO orders
+    (customer_id, restaurant_id, order_date, total_amount, order_status)
+    VALUES
+    (p_customer_id, p_restaurant_id, NOW(), p_total_amount, 'Placed');
+END //
+DELIMITER ;    
+CALL PlaceOrder(1, 1, 500.00);
+
+72)Procedure 2 – Customer Spending Report
+DELIMITER //
+CREATE PROCEDURE CustomerSpendingReport(
+    IN p_customer_id INT
+)
+BEGIN
+    SELECT
+        c.customer_id,
+        CONCAT(c.first_name, ' ', c.last_name) AS customer_name,
+        COUNT(o.order_id) AS total_orders,
+        SUM(o.total_amount) AS total_spending
+    FROM customers c
+    LEFT JOIN orders o
+        ON c.customer_id = o.customer_id
+    WHERE c.customer_id = p_customer_id
+    GROUP BY
+        c.customer_id,
+        c.first_name,
+        c.last_name;
+END //
+DELIMITER ;
+
+CALL CustomerSpendingReport(1);
+
+73)Function 1 – Calculate Delivery Charge
+DELIMITER //
+CREATE FUNCTION CalculateDeliveryCharge(distance DECIMAL(10,2))
+RETURNS DECIMAL(10,2)
+DETERMINISTIC
+BEGIN
+    DECLARE charge DECIMAL(10,2);
+    IF distance <= 5 THEN
+        SET charge = 30;
+    ELSEIF distance <= 10 THEN
+        SET charge = 50;
+    ELSE
+        SET charge = 80;
+    END IF;
+    RETURN charge;
+END //
+DELIMITER ;
+
+SELECT CalculateDeliveryCharge(7);
+
+74)Function 2 – Customer Category Based on Spending
+DELIMITER //
+CREATE FUNCTION CustomerCategory(spending DECIMAL(10,2))
+RETURNS VARCHAR(20)
+DETERMINISTIC
+BEGIN
+    DECLARE category VARCHAR(20);
+    IF spending < 5000 THEN
+        SET category = 'Low';
+    ELSEIF spending < 15000 THEN
+        SET category = 'Medium';
+    ELSE
+        SET category = 'High';
+    END IF;
+    RETURN category;
+END //
+DELIMITER ;
+
+SELECT
+    customer_id,
+    SUM(total_amount) AS total_spending,
+    CustomerCategory(SUM(total_amount)) AS customer_category
+FROM orders
+GROUP BY customer_id;
+
+75)Trigger 1 – Update Order Total
+DELIMITER //
+CREATE TRIGGER update_order_total
+AFTER INSERT ON order_items
+FOR EACH ROW
+BEGIN
+    UPDATE orders
+    SET total_amount = (
+        SELECT SUM(quantity * price)
+        FROM order_items
+        WHERE order_id = NEW.order_id
+    )
+    WHERE order_id = NEW.order_id;
+END //
+DELIMITER ;
+
+76)Trigger 2 – Update Order Status After Payment
+DELIMITER //
+CREATE TRIGGER update_order_status_after_payment
+AFTER INSERT ON payments
+FOR EACH ROW
+BEGIN
+    IF NEW.payment_status = 'Paid' THEN
+        UPDATE orders
+        SET order_status = 'Confirmed'
+        WHERE order_id = NEW.order_id;
+    END IF;
+END //
+DELIMITER ;
+
+77)Trigger 3 – Validate Review Rating
+DELIMITER //
+CREATE TRIGGER validate_review_rating
+BEFORE INSERT ON reviews
+FOR EACH ROW
+BEGIN
+    IF NEW.rating < 1 OR NEW.rating > 5 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Rating must be between 1 and 5';
+    END IF;
+END //
+DELIMITER ;
+
+SHOW TRIGGERS;
+use foodzone;
+SHOW PROCEDURE STATUS
+WHERE Db = 'foodzone';
+
+SHOW FUNCTION STATUS
+WHERE Db = 'foodzone';
+
+SHOW FULL TABLES
+WHERE Table_type = 'VIEW';
+
+
+78) events
+SET GLOBAL event_scheduler = ON;
+CREATE EVENT update_coupon_status
+ON SCHEDULE EVERY 1 DAY
+DO
+UPDATE coupons
+SET status = 'Expired'
+WHERE end_date < CURDATE();
+SHOW EVENTS;
+
+
+79) window functions()
+-->ROW_NUMBER()  Give a serial number to all orders.
+SELECT 
+    order_id,
+    customer_id,
+    total_amount,
+    ROW_NUMBER() OVER (ORDER BY order_id) AS row_num
+FROM orders;
+
+80)RANK() Rank orders according to their total amount (highest amount = Rank 1).
+SELECT 
+    order_id,
+    customer_id,
+    total_amount,
+    RANK() OVER (ORDER BY total_amount DESC) AS order_rank
+FROM orders;
+
+81)DENSE_RANK()  Rank orders based on total amount, without skipping rank numbers.
+SELECT 
+    order_id,
+    customer_id,
+    total_amount,
+    DENSE_RANK() OVER (ORDER BY total_amount DESC) AS order_rank
+FROM orders;
+
+
+82)LAG() Show the previous order amount along with the current order amount.
+SELECT 
+    order_id,
+    total_amount,
+    LAG(total_amount) OVER (ORDER BY order_id) AS previous_order_amount
+FROM orders;
+
+83)LEAD() Show the next order amount along with the current order amount.
+SELECT 
+    order_id,
+    total_amount,
+    LEAD(total_amount) OVER (ORDER BY order_id) AS next_order_amount
+FROM orders;
+
+ANALYTICS REPORT:-
+
+SELECT COUNT(*) AS total_customers FROM customers;
+SELECT COUNT(*) AS total_orders FROM orders;
+SELECT SUM(total_amount) AS total_revenue FROM orders;
+SELECT ROUND(AVG(total_amount), 2) AS average_order_value FROM orders;
+SELECT COUNT(*) AS delivered_orders
+FROM orders
+WHERE order_status = 'Delivered';
+
+use foodzone;
+
